@@ -4,7 +4,7 @@ import bpy
 bl_info = {
     "name": "Select Non-Deforming Bones",
     "author": "AstroDoge",
-    "version": (1, 0),
+    "version": (1, 0, 0),
     "blender": (2, 80, 0),
     "location": "Select > Select Non-Deforming Bones",
     "description": "Selects all bones in Edit Mode that have the deform property disabled.",

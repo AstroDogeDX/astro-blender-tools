@@ -3,7 +3,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "category": "3D View",
     "author": "AstroDoge",
-    "version": (1, 0),
+    "version": (1, 0, 0),
 }
 
 import bpy
