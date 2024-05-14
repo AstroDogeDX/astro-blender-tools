@@ -3,7 +3,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "category": "3D View",
     "author": "AstroDoge",
-    "version": (1, 0, 0),
+    "version": (1, 0, 1),
 }
 
 import bpy
@@ -96,6 +96,9 @@ class VIEW3D_PT_save_pose_as_shape_key_panel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         scene = context.scene
+        obj = context.object
+        
+        is_pose_mode = obj and obj.mode == 'POSE'
         
         layout.label(text="Target Mesh:")
         layout.prop_search(scene, "target_mesh", scene, "objects", text="")
@@ -111,14 +114,18 @@ class VIEW3D_PT_save_pose_as_shape_key_panel(bpy.types.Panel):
         layout.prop(scene, "shape_key_name", text="")
         
         shape_key_name = scene.shape_key_name
-        if target_mesh and target_mesh.data.shape_keys and shape_key_name in target_mesh.data.shape_keys.key_blocks:
+        is_name_conflict = target_mesh and target_mesh.data.shape_keys and shape_key_name in target_mesh.data.shape_keys.key_blocks
+        
+        layout.prop(scene, "keep_pose_after_saving", text="Keep Pose After Saving")
+        
+        col = layout.column()
+        col.enabled = is_pose_mode and not is_name_conflict
+        col.operator("object.save_pose_as_shape_key", text="Save Pose as Shape Key")
+        
+        if is_name_conflict:
             layout.label(text="Warning: Shape Key name already in use!", icon='ERROR')
-            layout.prop(scene, "keep_pose_after_saving", text="Keep Pose After Saving")
-            save_button = layout.operator("object.save_pose_as_shape_key", text="Save Pose as Shape Key")
-            save_button.enabled = False
-        else:
-            layout.prop(scene, "keep_pose_after_saving", text="Keep Pose After Saving")
-            layout.operator("object.save_pose_as_shape_key", text="Save Pose as Shape Key")
+        if not is_pose_mode:
+            layout.label(text="Warning: You must be in Pose Mode to use this tool.", icon='ERROR')
 
 def register():
     bpy.utils.register_class(OBJECT_OT_save_pose_as_shape_key)
